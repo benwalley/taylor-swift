@@ -1,0 +1,15 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-taylorswift-staging-00336-authRole",
+      "UnauthRoleArn": "arn:aws:iam::085545611160:role/amplify-taylorswift-staging-00336-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::085545611160:role/amplify-taylorswift-staging-00336-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-taylorswift-staging-00336-deployment",
+      "UnauthRoleName": "amplify-taylorswift-staging-00336-unauthRole",
+      "StackName": "amplify-taylorswift-staging-00336",
+      "StackId": "arn:aws:cloudformation:us-east-1:085545611160:stack/amplify-taylorswift-staging-00336/77566770-6249-11ee-a9f1-0ebc76c65d1b",
+      "AmplifyAppId": "dmj2ha3zyxe0u"
+    }
+  }
+}
