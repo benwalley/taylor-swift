@@ -1,5 +1,5 @@
 import {DataStore} from 'aws-amplify';
-import {Album, Song} from "../models";
+import {Album, Artist, Song} from "../models";
 
 export async function createNewSong(data) {
     const {name, lyrics, album} = data
@@ -71,10 +71,36 @@ export async function createNewAlbum(data) {
     try {
         const album = await DataStore.save(
             new Album({
-                name
+                name: name.toLowerCase()
             })
         );
         return album;
+    } catch (error) {
+
+    }
+}
+
+export async function getArtistsByName(name) {
+    if(name === '') return [];
+    const artists = await DataStore.query(Artist, (c) => c.name.eq(name.toLowerCase()));
+    return artists
+}
+
+export async function getAllArtists() {
+    const artists = await DataStore.query(Artist);
+    return artists
+}
+
+export async function createNewArtist(data) {
+    const {name} = data
+    if(!name) return;
+    try {
+        const artist = await DataStore.save(
+            new Artist({
+                name: name.toLowerCase(),
+            })
+        );
+        return artist
     } catch (error) {
 
     }

@@ -1,0 +1,39 @@
+.highlightedLyrics .green {
+    background: #a4e4ba;
+}
+
+/* grid helper classes*/
+.display-grid {
+    display: grid;
+}
+
+.theme-two-column {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+@media only screen and (min-width: 768px) {
+    .theme-two-column {
+        grid-template-columns: 1fr 400px;
+    }
+}
+
+.g-c-one {
+    grid-column: 1;
+}
+
+.g-c-two {
+    grid-column: 2;
+}
+
+.g-r-one {
+    grid-row: 1;
+}
+
+.g-r-two {
+    grid-row: 2;
+}
+
+.g-span-full {
+    grid-column: 1 / -1;
+}

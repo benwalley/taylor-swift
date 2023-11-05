@@ -3,6 +3,7 @@ import {Accordion, AccordionDetails, AccordionSummary, Checkbox, Typography} fro
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AlbumSection from "./AlbumSection";
 import {getAllAlbums} from "../../helpers/dataStoreHelpers";
+import NoAlbumSection from "./NoAlbumSection";
 
 
 const sidebarContainerStyles = {
@@ -29,8 +30,9 @@ export default function RightSidebar(props) {
         <div style={sidebarContainerStyles}>
             <h2>Albums</h2>
             {albumList.map(album => {
-                return <AlbumSection album={album}/>
+                return <AlbumSection key={album.id} album={album}/>
             })}
+            <NoAlbumSection/>
         </div>
     );
 }

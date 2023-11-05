@@ -6,6 +6,7 @@ import {selectedEditSongId} from "../../state/atoms/selectedEditSongId";
 import {DataStore} from "aws-amplify";
 import {Album, Song} from "../../models";
 import {editingAlbumName} from "../../state/atoms/editingAlbumName";
+import {AlbumListVersion} from "../../state/atoms/versions/AlbumListVersion";
 
 export default function AlbumSelect(props) {
     const {} = props
@@ -14,6 +15,7 @@ export default function AlbumSelect(props) {
     const [albumData, setAlbumData] = useState({})
     const [albumList, setAlbumList] = useState([])
     const [albumName, setAlbumName] = useRecoilState(editingAlbumName)
+    const [albumListVersion, setAlbumListVersion] = useRecoilState(AlbumListVersion)
 
     async function updateSongData() {
         if(!songId) return;
@@ -42,7 +44,7 @@ export default function AlbumSelect(props) {
 
     useEffect(() => {
         updateAlbumList();
-    }, []);
+    }, [albumListVersion]);
 
     async function updateAlbumList() {
         const albums = await getAllAlbums()

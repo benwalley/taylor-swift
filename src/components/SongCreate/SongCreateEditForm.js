@@ -17,11 +17,27 @@ import {Album, Song} from "../../models";
 import AlbumSelect from "../AdminPage/AlbumSelect";
 import {SongListVersion} from "../../state/atoms/versions/SongListVersion";
 import {editingSongName} from "../../state/atoms/editingSongName";
+import Notification from "../Notification/Notification";
+import {AlbumListVersion} from "../../state/atoms/versions/AlbumListVersion";
 
 const buttonStyles = {
     position: 'fixed',
     bottom: 0,
     width: 'calc(100% - 80px)',
+}
+
+const formStyle = {
+    display: 'grid',
+    gridTemplateColumns: '1fr 300px',
+    gap: '20px',
+}
+
+const leftSide = {
+    gridColumn: 1,
+}
+
+const rightSide = {
+    gridColumn: 2,
 }
 
 export default function SongCreateEditForm(props) {
@@ -34,6 +50,7 @@ export default function SongCreateEditForm(props) {
     const [songNameValue, setSongNameValue] = useRecoilState(editingSongName);
     const [albumName, setAlbumName] = useRecoilState(editingAlbumName);
     const [songListVersion, setSongListVersion] = useRecoilState(SongListVersion)
+    const [albumListVersion, setAlbumListVersion] = useRecoilState(AlbumListVersion)
 
 
     async function updateSongData() {
@@ -83,6 +100,13 @@ export default function SongCreateEditForm(props) {
             album: albumId
         }
         await updateSong(songData.id, songCreateData);
+        addSuccessMessage();
+        setAlbumListVersion(albumListVersion + 1)
+    }
+
+    function addSuccessMessage() {
+        setSnackbarMessage("Saved Song")
+        setSnackbarOpen(true)
     }
 
     async function handleDelete() {
@@ -93,13 +117,12 @@ export default function SongCreateEditForm(props) {
     }
 
     return (
-        <form style={{display: 'block'}} onSubmit={handleSubmit}>
-            <Stack direction='row' spacing={4} alignItems='center' margin={2}>
-                <h2>{songData?.name}</h2>
+        <form style={formStyle} onSubmit={handleSubmit}>
+            <Stack sx={leftSide} direction='row' spacing={4} alignItems='center' margin={2}>
                 {songData && <Button variant='contained' onClick={handleDelete}>{`Delete ${songData.name}`}</Button>}
             </Stack>
 
-            <Stack spacing={3}>
+            <Stack sx={leftSide} spacing={3}>
                 <AlbumSelect/>
                 <TextField
                     sx={{width: '100%'}}
@@ -112,12 +135,15 @@ export default function SongCreateEditForm(props) {
                 />
                 <Button style={buttonStyles} type='submit' variant='contained'>Save</Button>
             </Stack>
-
-            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-                    {snackbarMessage}
-                </Alert>
-            </Snackbar>
+            <Stack sx={rightSide} spacing={3}>
+                <TextField label='Year'/>
+                <TextField
+                    label='Notes'
+                    multiline
+                    rows={10}
+                />
+            </Stack>
+            <Notification open={snackbarOpen} setOpen={setSnackbarOpen} message={snackbarMessage}/>
         </form>
     );
 }

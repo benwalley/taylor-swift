@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Button from '@mui/material/Button';
 import {AppBar, IconButton, Toolbar, Typography} from "@mui/material";
+import {Navigate} from "react-router-dom";
 
 
 function MenuIcon() {
@@ -16,7 +17,12 @@ export default function Header(props) {
     }
     return (
         <div style={containerStyles}>
-                Header
+            <Button>
+                <a href="/admin">Admin</a>
+            </Button>
+            <Button>
+                <a href="/">Home</a>
+            </Button>
         </div>
     );
 }
