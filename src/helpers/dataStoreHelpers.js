@@ -95,13 +95,14 @@ export async function createNewArtist(data) {
     const {name} = data
     if(!name) return;
     try {
+        const lowercaseName = name.toLowerCase() || '';
         const artist = await DataStore.save(
             new Artist({
-                name: name.toLowerCase(),
+                name: lowercaseName
             })
         );
         return artist
     } catch (error) {
-
+        console.log(error)
     }
 }

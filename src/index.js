@@ -39,6 +39,7 @@ const contentStyles = {
     gridTemplateColumns: '1fr 400px',
     gridTemplateRows: '65px 1fr',
     height: '100vh',
+    background: '#f2f0eb',
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

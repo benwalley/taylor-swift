@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {
     Stack,
-    Step, StepLabel,
+    Step, StepButton, StepLabel,
     Stepper,
     Typography
 } from "@mui/material";
@@ -68,14 +68,17 @@ export default function AdminPage(props) {
         }
     ]
 
-    const handleBackStep = () => {
-        if(activeStep < 0) {
-            setActiveStep(activeStep - 1);
-        }
-    };
+    function handleStepClick(index) {
+        setActiveStep(index)
+    }
+
+    const stackStyles = {
+        padding: '40px',
+        gridColumn: '1 / -1'
+    }
 
     return (
-        <div style={{gridColumn: '1 / -1', padding: '40px'}}>
+        <Stack direction='column' spacing={4} sx={stackStyles}>
             <Stepper activeStep={activeStep} alternativeLabel>
                 {steps.map((step, index) => {
                     const stepProps = {};
@@ -90,26 +93,15 @@ export default function AdminPage(props) {
                     }
                     return (
                         <Step key={step.label} {...stepProps}>
-                            <StepLabel {...labelProps}>{step.label}</StepLabel>
+                            <StepButton color="inherit" onClick={() => handleStepClick(index)}>
+                                {step.label}
+                            </StepButton>
                         </Step>
                     );
                 })}
             </Stepper>
             {steps[activeStep].component}
-            {/*<Stack direction={'row'} spacing={2}>*/}
-            {/*    {selectedSongId && <Button onClick={handleBackToEdit} startIcon={<KeyboardBackspaceRoundedIcon/>}>Back</Button>}*/}
-            {/*    <h1>{selectedSongId ? editingSongNameState : 'Add or Edit'}</h1>*/}
-            {/*</Stack>*/}
-            {/*{!selectedSongId && <SongSelect/>}*/}
-
-            {/*{selectedSongId && <SongCreateEditForm*/}
-            {/*    songList={songList}*/}
-            {/*    albumName={albumName}*/}
-            {/*    setAlbumName={setAlbumName}*/}
-            {/*    lyrics={lyricsValue}*/}
-            {/*    setLyrics={setLyricsValue}*/}
-            {/*/>}*/}
-        </div>
+        </Stack>
     );
 }
 

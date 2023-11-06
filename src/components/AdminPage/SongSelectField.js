@@ -1,36 +1,34 @@
 import React, {useEffect, useState} from 'react';
 import {Autocomplete, TextField} from "@mui/material";
+import Button from "@mui/material/Button";
 import {useRecoilState} from "recoil";
-import {
-    createNewArtist,
-    getAllArtists,
-    getArtistsByName,
-} from "../../helpers/dataStoreHelpers";
-import CreateOptionDialog from "./CreateOptionDialog";
+import {editingSongName} from "../../state/atoms/editingSongName";
+import {createNewSong, getAllSongs, getSongsByName} from "../../helpers/dataStoreHelpers";
+import {selectedEditSongId} from "../../state/atoms/selectedEditSongId";
+import {SongListVersion} from "../../state/atoms/versions/SongListVersion";
 import {addStep} from "../../state/atoms/addStep";
-import {selectedEditArtistId} from "../../state/atoms/selectedEditArtistId";
-import {ArtistListVersion} from "../../state/atoms/versions/ArtistListVersion";
+import CreateOptionDialog from "./CreateOptionDialog";
 
-export default function ArtistSelectField(props) {
+export default function SongSelectField(props) {
     const {} = props
-    const [nameValue, setNameValue] = useState('');
-    const [artistList, setArtistList] = useState([])
-    const [selectedArtistId, setSelectedArtistId] = useRecoilState(selectedEditArtistId);
-    const [artistListVersion, setArtistListVersion] = useRecoilState(ArtistListVersion)
+    const [nameValue, setNameValue] = useRecoilState(editingSongName);
+    const [songList, setSongList] = useState([])
+    const [selectedSongId, setSelectedSongId] = useRecoilState(selectedEditSongId);
+    const [songListVersion, setSongListVersion] = useRecoilState(SongListVersion)
     const [dialogOpen, setDialogOpen] = useState(false)
     const [activeStep, setActiveStep] = useRecoilState(addStep)
 
     useEffect(() => {
-        updateArtistList();
-    }, [artistListVersion]);
+        updateSongList();
+    }, [songListVersion]);
+
+    async function updateSongList() {
+        const songs = await getAllSongs()
+        setSongList(songs);
+    }
 
     function goToNextStep() {
         setActiveStep(activeStep + 1)
-    }
-
-    async function updateArtistList() {
-        const artists = await getAllArtists()
-        setArtistList(artists);
     }
 
     function handleSubmitAutocomplete(e) {
@@ -48,40 +46,40 @@ export default function ArtistSelectField(props) {
         if(name === '') {
             return;
         }
-        let isExistingArtist = false;
-        const existingArtists = await getArtistsByName(name);
-        if(existingArtists.length > 0) {
-            isExistingArtist = true;
-            newValue = existingArtists[0]
+        let isExistingSong = false;
+        const existingSongs = await getSongsByName(name);
+        if(existingSongs.length > 0) {
+            isExistingSong = true;
+            newValue = existingSongs[0]
         }
 
         setNameValue(name);
 
-        if (isExistingArtist) {
-            setSelectedArtistId(newValue.id);
+        if (isExistingSong) {
+            setSelectedSongId(newValue.id);
             goToNextStep();
         } else {
             setDialogOpen(true)
         }
     }
 
-    async function afterCreateNewArtist(name) {
-        const newArtistData = await createNewArtist({name});
-        setSelectedArtistId(newArtistData?.id)
-        await updateArtistList();
+    async function afterCreateNewSong(name) {
+        const newSongData = await createNewSong({name});
+        setSelectedSongId(newSongData?.id)
+        await updateSongList();
         goToNextStep()
     }
 
     function handleTextChange(e) {
         setNameValue(e.target.value);
-        if(selectedArtistId !== undefined) {
-            setSelectedArtistId(undefined);
+        if(selectedSongId !== undefined) {
+            setSelectedSongId(undefined);
         }
     }
 
     function handleFilterOptions(options, params) {
-        const filtered = options.filter(artist => {
-            return artist.name.toLowerCase().indexOf(params.inputValue.toLowerCase()) > -1;
+        const filtered = options.filter(song => {
+            return song.name.toLowerCase().indexOf(params.inputValue.toLowerCase()) > -1;
         })
 
         return filtered;
@@ -95,7 +93,7 @@ export default function ArtistSelectField(props) {
     return (
         <form onSubmit={handleSubmitAutocomplete} style={formStyles}>
             <Autocomplete
-                id="select-artist"
+                id="select-song"
                 value={nameValue}
                 onChange={(e, newValue) => {
                     handleSelectChange(e, newValue)
@@ -114,11 +112,11 @@ export default function ArtistSelectField(props) {
                 freeSolo
                 selectOnFocus
                 handleHomeEndKeys
-                options={artistList.map((option) => option)}
+                options={songList.map((option) => option)}
                 renderInput={(params) => {
                     return <TextField value={nameValue} onChange={handleTextChange}
                                       {...params}
-                                      label="Search for an artist or add a new one"
+                                      label="Search for a song or add a new one"
                     />
                 }}
                 renderOption={(props, option) => {
@@ -128,11 +126,11 @@ export default function ArtistSelectField(props) {
             <CreateOptionDialog
                 open={dialogOpen}
                 setOpen={setDialogOpen}
-                headingText={"Add Artist"}
-                secondaryText={"We don't have this artist in our database yet. Would you like to add it?"}
+                headingText={"Add Song"}
+                secondaryText={"We don't have this song in our database yet. Would you like to add it?"}
                 newName={nameValue}
                 saveButtonText='Add'
-                afterSubmit={(name) => afterCreateNewArtist(name)}
+                afterSubmit={(name) => afterCreateNewSong(name)}
                 textFieldName='Artist or Band Name'
             />
         </form>

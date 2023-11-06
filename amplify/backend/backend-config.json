@@ -1,6 +1,6 @@
 {
   "api": {
-    "TaylorSwift": {
+    "SongAnalyzer": {
       "dependsOn": [],
       "output": {
         "authConfig": {

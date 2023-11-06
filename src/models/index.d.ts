@@ -6,6 +6,52 @@ import { LazyLoading, LazyLoadingDisabled } from "@aws-amplify/datastore";
 
 
 
+type EagerSong = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Song, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name: string;
+  readonly album?: string | null;
+  readonly lyrics?: (string | null)[] | null;
+  readonly year?: string | null;
+  readonly date?: string | null;
+  readonly singer?: string | null;
+  readonly writer?: string | null;
+  readonly notes?: string | null;
+  readonly other?: string | null;
+  readonly artistId?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazySong = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Song, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name: string;
+  readonly album?: string | null;
+  readonly lyrics?: (string | null)[] | null;
+  readonly year?: string | null;
+  readonly date?: string | null;
+  readonly singer?: string | null;
+  readonly writer?: string | null;
+  readonly notes?: string | null;
+  readonly other?: string | null;
+  readonly artistId?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Song = LazyLoading extends LazyLoadingDisabled ? EagerSong : LazySong
+
+export declare const Song: (new (init: ModelInit<Song>) => Song) & {
+  copyOf(source: Song, mutator: (draft: MutableModel<Song>) => MutableModel<Song> | void): Song;
+}
+
 type EagerAlbum = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<Album, 'id'>;
@@ -34,44 +80,30 @@ export declare const Album: (new (init: ModelInit<Album>) => Album) & {
   copyOf(source: Album, mutator: (draft: MutableModel<Album>) => MutableModel<Album> | void): Album;
 }
 
-type EagerSong = {
+type EagerArtist = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<Song, 'id'>;
+    identifier: ManagedIdentifier<Artist, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
   readonly name: string;
-  readonly album?: string | null;
-  readonly lyrics?: string | null;
-  readonly year?: string | null;
-  readonly singer?: string | null;
-  readonly writer?: string | null;
-  readonly notes?: string | null;
-  readonly other?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-type LazySong = {
+type LazyArtist = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<Song, 'id'>;
+    identifier: ManagedIdentifier<Artist, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
   readonly name: string;
-  readonly album?: string | null;
-  readonly lyrics?: string | null;
-  readonly year?: string | null;
-  readonly singer?: string | null;
-  readonly writer?: string | null;
-  readonly notes?: string | null;
-  readonly other?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-export declare type Song = LazyLoading extends LazyLoadingDisabled ? EagerSong : LazySong
+export declare type Artist = LazyLoading extends LazyLoadingDisabled ? EagerArtist : LazyArtist
 
-export declare const Song: (new (init: ModelInit<Song>) => Song) & {
-  copyOf(source: Song, mutator: (draft: MutableModel<Song>) => MutableModel<Song> | void): Song;
+export declare const Artist: (new (init: ModelInit<Artist>) => Artist) & {
+  copyOf(source: Artist, mutator: (draft: MutableModel<Artist>) => MutableModel<Artist> | void): Artist;
 }
