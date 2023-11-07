@@ -1,3 +1,7 @@
+:root {
+    --background-color: #f2f0eb;
+}
+
 .highlightedLyrics .green {
     background: #a4e4ba;
 }

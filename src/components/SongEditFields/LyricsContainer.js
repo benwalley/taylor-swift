@@ -1,12 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import LyricLineInput from "./LyricLineInput";
 import {useRecoilState} from "recoil";
-import {EditingLyricLines} from "../../state/atoms/EditingLyricLines";
 import {selectedEditSongId} from "../../state/atoms/selectedEditSongId";
 import {DataStore} from "aws-amplify";
 import {Song} from "../../models";
 import {updateSong} from "../../helpers/dataStoreHelpers";
-import {EditingLyricLineId} from "../../state/atoms/EditingLyricLineId";
 import {createEmptyLine} from "../../helpers/lyricsHelpers";
 
 export default function LyricsContainer(props) {
@@ -15,10 +13,10 @@ export default function LyricsContainer(props) {
     const [songData, setSongData] = useState({});
     const [lyricsWorkingCopy, setLyricsWorkingCopy] = useState([]);
     const [lyricsChanged, setLyricsChanged] = useState(false);
+    const [usedIds, setUsedIds] = useState([])
     const [debounceId, setDebounceId] = useState()
 
     const debounceTimeout = 500;
-
 
     useEffect(() => {
         if (songId === undefined) return;
@@ -61,6 +59,31 @@ export default function LyricsContainer(props) {
         setLyricsChanged(true);
     }
 
+    function splitLine(initialLineId, contentsArray) {
+        if(contentsArray?.length !== 2) return;
+        const [firstLine, secondLine] = contentsArray;
+        const lyricsCopy = [...lyricsWorkingCopy]
+        const updatedLyrics = [];
+        for (const line of lyricsCopy) {
+            if(line.id === initialLineId) {
+                const lineData = {
+                    id: line.id,
+                    singerType: line.singerType,
+                    content: firstLine,
+                }
+                updatedLyrics.push(lineData)
+                const emptyLine = createEmptyLine({lyrics: lyricsCopy, stringify: false, parse: false});
+                emptyLine.content = secondLine;
+                setUsedIds([...usedIds, emptyLine.id]);
+                updatedLyrics.push(emptyLine);
+            } else {
+                updatedLyrics.push(line);
+            }
+        }
+        setLyricsWorkingCopy(updatedLyrics);
+        setLyricsChanged(true);
+    }
+
     async function updateData() {
         const song = await DataStore.query(Song, songId);
         if(song !== undefined) {
@@ -69,8 +92,9 @@ export default function LyricsContainer(props) {
                 return;
             }
             // add an empty line to lyrics
-            const emptyLine = createEmptyLine(song?.lyrics);
-            const updatedSong = await updateSong(song.id, {lyrics: [emptyLine]})
+            const emptyLine = createEmptyLine({lyrics: song?.lyrics, stringify: false, parse: true});
+            setUsedIds([...usedIds, emptyLine.id]);
+            const updatedSong = await updateSong(song.id, {lyrics: [JSON.stringify(emptyLine)]})
             console.log(updatedSong)
         }
     }
@@ -80,17 +104,25 @@ export default function LyricsContainer(props) {
             if(line.id === id) return false;
             return true
         })
+        if(updatedLyrics.length === 0) {
+            const emptyLine = createEmptyLine({lyrics: [], stringify: false, parse: true})
+            setUsedIds([...usedIds, emptyLine.id]);
+            updatedLyrics.push(emptyLine);
+        }
         setLyricsWorkingCopy(updatedLyrics);
         setLyricsChanged(true);
     }
 
-    function handleAddLine(afterId) {
+    function handleAddLine(afterId, newContent) {
+        const newLineContent = typeof(newContent) === 'string' ? newContent : '';
         const lyricsCopy = [...lyricsWorkingCopy]
         const updatedLyrics = [];
         for (const line of lyricsCopy) {
             updatedLyrics.push(line);
             if(line.id === afterId) {
-                const emptyLine = createEmptyLine(lyricsCopy, false, false);
+                const emptyLine = createEmptyLine({lyrics: lyricsCopy, stringify: false, parse: false});
+                emptyLine.content = newLineContent;
+                setUsedIds([...usedIds, emptyLine.id]);
                 updatedLyrics.push(emptyLine);
             }
         }
@@ -105,10 +137,10 @@ export default function LyricsContainer(props) {
                     updateLineData={(data) => updateLine(line.id, data)}
                     key={line.id}
                     index={index}
-                    songData={songData}
                     lineData={line}
+                    splitLine={(contentArray) => splitLine(line.id, contentArray)}
                     deleteLine={() => handleDeleteLine(line.id)}
-                    addLine={() => handleAddLine(line.id)}/>
+                    addLine={(newContents) => handleAddLine(line.id, newContents)}/>
             })}
         </div>
     );

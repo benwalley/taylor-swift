@@ -74,7 +74,8 @@ export default function AdminPage(props) {
 
     const stackStyles = {
         padding: '40px',
-        gridColumn: '1 / -1'
+        gridColumn: '1 / -1',
+        background: 'var(--background-color)'
     }
 
     return (

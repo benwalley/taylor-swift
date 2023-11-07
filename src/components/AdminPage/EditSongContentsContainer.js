@@ -72,9 +72,6 @@ export default function EditSongContentsContainer(props) {
             <div style={contentStyles}>
                 {tabs[currentEditTab].content}
             </div>
-            <div style={submitContainerStyles}>
-                <Button sx={submitStyles} variant='contained'>Save Song</Button>
-            </div>
         </div>
     );
 }

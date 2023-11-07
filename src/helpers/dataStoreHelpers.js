@@ -4,7 +4,7 @@ import {createEmptyLine} from "./lyricsHelpers";
 
 export async function createNewSong(name) {
     if(!name) return;
-    const lyrics = createEmptyLine([])
+    const lyrics = createEmptyLine({lyrics: [], parse: false, stringify: true})
     try {
         const song = await DataStore.save(
             new Song({
