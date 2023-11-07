@@ -53,7 +53,7 @@ export default function SelectOrCreateDropdown(props) {
         if (isExistingSong) {
             setSelectedSongId(newValue.id);
         } else {
-            const newSongData = await createNewSong({name});
+            const newSongData = await createNewSong(name);
             setSelectedSongId(newSongData?.id)
             await updateSongList();
         }

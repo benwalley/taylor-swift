@@ -97,6 +97,7 @@ export default function ArtistSelectField(props) {
             <Autocomplete
                 id="select-artist"
                 value={nameValue}
+                sx={{background: 'white'}}
                 onChange={(e, newValue) => {
                     handleSelectChange(e, newValue)
                 }}

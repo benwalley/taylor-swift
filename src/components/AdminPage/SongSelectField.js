@@ -64,7 +64,7 @@ export default function SongSelectField(props) {
     }
 
     async function afterCreateNewSong(name) {
-        const newSongData = await createNewSong({name});
+        const newSongData = await createNewSong(name);
         setSelectedSongId(newSongData?.id)
         await updateSongList();
         goToNextStep()
@@ -95,6 +95,7 @@ export default function SongSelectField(props) {
             <Autocomplete
                 id="select-song"
                 value={nameValue}
+                sx={{background: 'white'}}
                 onChange={(e, newValue) => {
                     handleSelectChange(e, newValue)
                 }}

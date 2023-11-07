@@ -1,21 +1,25 @@
 import {DataStore} from 'aws-amplify';
 import {Album, Artist, Song} from "../models";
+import {createEmptyLine} from "./lyricsHelpers";
 
-export async function createNewSong(data) {
-    const {name, lyrics, album} = data
+export async function createNewSong(name) {
     if(!name) return;
+    const lyrics = createEmptyLine([])
     try {
         const song = await DataStore.save(
             new Song({
                 name: name.toLowerCase(),
-                lyrics,
-                album
+                lyrics: [lyrics],
             })
         );
         return song
     } catch (error) {
 
     }
+}
+
+export async function getSongById(id) {
+    return await DataStore.query(Song, id);
 }
 
 export async function deleteSong(id) {
@@ -31,9 +35,9 @@ export async function updateSong(id, data) {
     if(!original) return;
     const updatedSong = await DataStore.save(
         Song.copyOf(original, updated => {
-            updated.name = data.name;
-            updated.lyrics = data.lyrics;
-            updated.album = data.album
+            updated.name = data.name || original.name;
+            updated.lyrics = data.lyrics || original.lyrics;
+            updated.album = data.album || original.album;
         })
     )
     return updatedSong
